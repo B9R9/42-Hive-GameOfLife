@@ -1,0 +1,11 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/briffard/Desktop/B9R9-GOL'
+mkdir -p ./objectFiles/
+gcc -Werror -Wextra -Wall -I ./libft/includes/ -I ./includes/  -o objectFiles/rushes_main.o -c srcs/rushes_main.c
+ 
+gcc -Werror -Wextra -Wall -o life ./objectFiles/rushes_main.o -L ./libft/ -lft
+mkdir -p ./objectFiles_opt/
+gcc -Werror -Wextra -Wall -I ./libft/includes/ -I ./includes/  -o objectFiles_opt/rushes_main_opt.o -c srcs_opt/rushes_main_opt.c
+gcc -Werror -Wextra -Wall -o life2.0 ./objectFiles_opt/rushes_main_opt.o -L ./libft/ -lft
+make: Leaving directory `/Users/briffard/Desktop/B9R9-GOL'
+ 

@@ -11,7 +11,7 @@ void create_map( char *line, t_data **data)
 }
 
 
-int check_map(char **arr, t_data **data)
+int check_map(char **arr, t_data **data, int argc)
 {
 	char line[MAX_SIZE];
 	char *position_new_line = NULL;
@@ -20,7 +20,7 @@ int check_map(char **arr, t_data **data)
 	FILE *fp;
 
 	(*data)->refmap = ft_strnew(1);
-	fp = fopen (arr[1], "r");
+	fp = fopen (arr[argc - 2], "r");
 	if (fp == NULL)
 	{
 		err_mes("Empty file or wrong file");
@@ -50,116 +50,6 @@ int check_map(char **arr, t_data **data)
 }
 
 
-// int check_around(int i, t_data **d)
-// {
-//     int n = 0;
-//     while (i < (*d)->row * (*d)->line)
-//     {
-//         // check up
-//         if (i - (*d)->line >= 0)
-//         {
-//             if ((*d)->refmap[i - (*d)->line] == 'X')
-//                 n++;
-//         }
-//         // check up-left
-//         if (i - (*d)->line >= 0 && (i - 1) % (*d)->line != (*d)->line - 1)
-//         {
-//             if ((*d)->refmap[i - (*d)->line - 1] == 'X')
-//                 n++;
-//         }
-//         //check up-right
-//         if (i - (*d)->line >= 0 && (i + 1) % (*d)->line != 0)
-//         {
-//             if ((*d)->refmap[i - (*d)->line + 1] == 'X')
-//                 n++;
-//         }
-//         // check down
-//         if (i + (*d)->line < (*d)->row * (*d)->line)
-//         {
-//             if ((*d)->refmap[i + (*d)->line] == 'X')
-//                 n++;
-//         }
-//         // check down-left
-//         if (i + (*d)->line < (*d)->row * (*d)->line && (i - 1) % (*d)->line != (*d)->line - 1)
-//         {
-//             if ((*d)->refmap[i + (*d)->line - 1])
-//                 n++;
-//         }
-//         // check down-right
-//         if (i + (*d)->line < (*d)->row * (*d)->line && (i + 1) % (*d)->line != 0)
-//         {
-//             if ((*d)->refmap[i + (*d)->line + 1])
-//                 n++;
-//         }
-//         // check left
-//         if ((i - 1) % (*d)->line != (*d)->line - 1)
-//         {
-//             if ((*d)->refmap[i - 1] == 'X')
-//                 n++;
-//         }
-//         // check right
-//         if ((i + 1) % (*d)->line != 0)
-//         {
-//             if ((*d)->refmap[i + 1] == 'X')
-//                 n++;
-//         }
-//         if ((n == 3) | (n == 2 && (*d)->refmap[i] == 'X'))
-//             (*d)->newmap[i] = 'X';
-//         else
-//             (*d)->newmap[i] = '.';
-//         i++;
-//         n = 0;
-//     }
-// }
-
-
-// int check_left(int position, t_data *data)
-// {
-//     if(((position - 1) / data->row) == (position / data->row) &&
-//     ((position - 1) >= 0))
-//         if (data->refmap[i - 1] == 'X')
-//             return (1);
-//     return (0);
-// }
-
-// int check_right(int i, t_data *data)
-// {
-//     if (i + 1 / data->row == i / data->row && i + 1 < data->row)
-//         if (data->refmap[i + 1] == 'X')
-//             return (1);
-//     return (0);
-// }
-
-// int check_up(i, t_data *data)
-// {
-//     int to_check = i + data->row;
-//     while ((to_check / data->row == i / data->row + 1) &&
-//     to_check / row < data->line && )
-//     {
-//         if (check_left(to_check))
-//     }
-//     return (0);
-// }
-
-// int checkregion(char k, char grid[9][9], int i, int j)
-// {
-//     int n;
-// 	int _i = i-(i%3);
-// 	int _j = j-(j%3);
-// 	i = _i;
-// 	j = _j;
-// 	while (i<_i+3)
-// 	{
-// 		while(j < _j +3)
-// 		{
-// 			if (grid[i][j] == 'X')
-// 				n++;
-// 			j++;
-// 		}
-// 		i++;
-// 	}
-// 	return (n);
-// }
 int define_start(int i , t_data *data)
 {
 	int row = data->row;
@@ -234,11 +124,33 @@ int check_region(int i, t_data **data)
 	return (n);
 }
 
+void print_map(char *map, int row, int iteration)
+{
+	sleep(1);
+	system("clear");
+	int x = 0, i = 0;
+	printf("================ %d =============\n", iteration);
+	while (map[i] != '\0')
+		{
+			if(map[i] == 'X')
+	    		printf("%s%c%s", "\x1B[32m", map[i], "\x1B[0m");
+			else
+				printf("%c", map[i]);
+			if(x == row - 1)
+	    	{
+				printf("\n");
+	        	x = -1;
+	    	}
+	    	x++;
+	    	i++;
+		}
+}
 
-void    solver(t_data **d)
+void    solver(t_data **d, int visuel)
 {
 	int i = 0;
 	int n = 0;
+
 	while ((*d)->iteration >= 0)
 	{
 		(*d)->newmap = ft_strnew((*d)->row * (*d)->line);
@@ -254,23 +166,8 @@ void    solver(t_data **d)
 			n = 0;
 		}
 		(*d)->newmap[i] = 0;
-		i = 0;
-		system("clear");
-		int x = 0;
-		printf("************   %d   **************\n",(*d)->iteration);
-		while ((*d)->newmap[i] != '\0')
-		{
-	    	printf("%c", (*d)->newmap[i]);
-	    	if(x == (*d)->row - 1)
-	    	{
-				printf("\n");
-	        	x = -1;
-	    	}
-	    	x++;
-	    	i++;
-		}
-		sleep(1);
-		system("clear");
+		if (visuel)
+			print_map((*d)->newmap, (*d)->row, ((*d)->iteration));
 		(*d)->refmap = ft_strdup((*d)->newmap);
 		ft_strdel(&(*d)->newmap);
 		(*d)->iteration--;
@@ -279,15 +176,37 @@ void    solver(t_data **d)
 
 int check_error(int size, char **tab, t_data **data)
 {
-	if (size != 3)
-{        err_mes("./life <initialestate> <iteration>");
+	int i = 0;
+	if (size < 3)
+{        err_mes("./life  <options> <initialestate> <iteration>");
 		return (1);}
-	if (ft_atoi(tab[2]) == 0)
+	while (tab[i][0] == '-')
+	{
+		if(!ft_isalpha(tab[0][1]))
+		{
+			err_mes("Wrong option");
+			return (1);
+		}
+		i++;
+	}
+	if (ft_atoi(tab[size - 1]) == 0)
 {        err_mes("Iteration need to be a digit or bigger then 0");
 		return (1);}
-	if (check_map(tab, data))
+	if (check_map(tab, data, size))
 {        err_mes("Wrong initialestate");
 		return (1);}
+	return (0);
+}
+
+int check_option(int argc, char **argv)
+{
+	int i = 1;
+	while (i < argc)
+	{
+		if(argv[i][0] == '-' && argv[i][1] == 'v')
+			return (1);
+		i++;
+	}
 	return (0);
 }
 
@@ -299,7 +218,8 @@ int main (int argc, char **argv)
 
 	if(check_error(argc, argv,&data))
 		return (0);
-	data->iteration = ft_atoi(argv[2]);
-	solver(&data);
+	data->iteration = ft_atoi(argv[argc - 1]);
+	solver(&data, check_option(argc,argv));
+	print_map(data->refmap,data->row, data->iteration);
 	return (0);
 }
