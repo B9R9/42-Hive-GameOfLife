@@ -2,6 +2,28 @@
 
 void print_map(char *map, int row, int iteration);
 
+void print_sleep_map(char *map, int row, int iteration)
+{
+	sleep(1);
+	system("clear");
+	int i = 0;
+	printf("================ %d =============\n", iteration);
+	while (map[i] != '\0')
+	{
+		if (i % row == 0)
+		{
+			printf("\n");
+		}
+		if(map[i] == 'X')
+	    	printf("%s%c%s", "\x1B[32m", map[i], "\x1B[0m");
+		else
+			printf("%c", map[i]);
+	    i++;
+	}
+	printf("\n");
+
+}
+
 void err_mes(char *message)
 {
 	printf("%s\n", message);
@@ -246,7 +268,6 @@ int check_region(int i, t_data *data)
 
 void print_map(char *map, int row, int iteration)
 {
-	sleep(1);
 	system("clear");
 	int i = 0;
 	printf("================ %d =============\n", iteration);
@@ -288,7 +309,7 @@ void    solver(t_data *d, int visuel)
 		}
 		newmap[i] = 0;
 		if (visuel)
-			print_map(newmap, d->row, z);
+			print_sleep_map(newmap, d->row, z);
 		char *temp = d->refmap;
 		d->refmap = newmap;
 		newmap = temp;
@@ -320,17 +341,17 @@ int check_error(int size, char **tab, t_data **data)
 	return (0);
 }
 
-// int check_option(int argc, char **argv)
-// {
-// 	int i = 1;
-// 	while (i < argc)
-// 	{
-// 		if(argv[i][0] == '-' && argv[i][1] == 'v')
-// 			return (1);
-// 		i++;
-// 	}
-// 	return (0);
-// }
+int check_option(int argc, char **argv)
+{
+	int i = 1;
+	while (i < argc)
+	{
+		if(argv[i][0] == '-' && argv[i][1] == 'v')
+			return (1);
+		i++;
+	}
+	return (0);
+}
 
 int main (int argc, char **argv)
 {
@@ -341,7 +362,7 @@ int main (int argc, char **argv)
 	if(check_error(argc, argv,&data))
 		return (0);
 	data->iteration = ft_atoi(argv[argc - 1]);
-	solver(data, 0);
-	print_map(data->refmap,data->row,0);
+	solver(data, check_option(argc, argv));
+	print_map(data->refmap,data->row, data->iteration);
 	return (0);
 }
